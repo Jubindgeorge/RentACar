@@ -1,0 +1,72 @@
+.products{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(135deg, #151718 20%, #cc8708 90%);
+}
+.containeradd{
+ width: 20%;
+ height: auto;
+ padding: 20px;
+ align-items: center;
+ background-color: rgb(0, 0, 0);
+ position: relative;
+ border-radius: 10px;
+}
+
+.formadd {
+    height: 50px;
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.formadd input {
+    height: 100%;
+    width: 100%;
+    background: #ffffff;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    color: #000000;
+    font-size: 1rem;
+    padding: 0 20px;
+}
+
+.formadd input:is(:focus, :valid) {
+    background: #ffffff;
+    padding: 16px 20px 0;
+}
+
+.formadd label {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    color: #000000;
+    transition: all 0.1s ease;
+}
+
+.formadd input:is(:focus, :valid)~label {
+    font-size: 0.75rem;
+    transform: translateY(-130%);
+}
+
+.addbtn {
+    width: 100%;
+    padding: 16px 0;
+    font-size: 1rem;
+    background: gold;
+    color: #000000;
+    font-weight: 600;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    margin: 25px 0 10px;
+    cursor: pointer;
+    transition: 0.1s ease;
+    text-align: center;
+     text-decoration:none;
+}

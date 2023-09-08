@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RideON</title>
+</head>
+<body class="bodylist">
+   <header class="headers">
+      <nav class="navbar max-width">
+        <h1 class="name">RideON</h1>
+        
+        <ul class="linkcar">
+          <li><a href="/">Home</a></li>
+          <li><a href="/carslist">Cars</a></li>
+           <li class="language">
+           {{!-- <span class="material-symbols-outlined">language</span> --}}
+            <a href="#">English</a>
+          </li>
+          <li><a href="/cart">Checkout</a></li>
+          <li class="btn join"><a href="/login">Join</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="container_car">
+      
+         <button class="open-button" onclick="openForm()">
+             <img src="https://www.evmwheels.com/assets/img/location_icon.png" alt="" class="img">
+              <span id="pick">Pickup Point</span>
+         </button>
+
+      <div class="form-popup" id="myForm">
+         <form action="/action_page.php" class="form-container">
+  
+                <h1>Select Pickup City</h1>
+                    {{!-- <div>
+                      <ul>
+                        <li>Cochin</li>
+                        <li>Kottayam</li>
+                        <li>Trivandrum</li>
+                        <li>Kozhikode</li>
+                        <li>Kollam</li>
+                      </ul>
+                    </div><label for="cars">Choose a car:</label> --}}
+                <select name="cars" id="cars" oninput="selectcity()" class="dropdown">
+                  <option value=""></option>
+                  <option value="Cochin">Cochin</option>
+                  <option value="Kottayam">Kottayam</option>
+                  <option value="Trivandrum">Trivandrum</option>
+                  <option value="Kozhikode">Kozhikode</option>
+                  <option value="Kollam">Kollam</option>
+                </select>
+                <br><br>
+                <input type="button" value="" onclick="selectcity()">
+                  <button type="submit" class="btn">Back</button>
+                  <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+                  
+                
+          </form>
+      </div>
+       <button class="open-button" onclick="openForm1()">
+          <img src="https://www.evmwheels.com/assets/img/date_icon.png" alt="" class="img">
+            <span id="date">Pickup Date & Time</span>
+       </button>
+
+        <div class="form-popup" id="myForm1">
+            <form action="/action_page.php" class="form-container">
+                <h1>Select Your Pickup Date</h1>
+               <input type="datetime-local" id="PickUP" name="Picupdate" oninput="pickupdate()">
+                 <input type="button" value="" onclick="pickupdate()">
+                    <button type="submit" class="btn">Back</button>
+                    <button type="button" class="btn cancel" onclick="closeForm1()">Close</button>
+            </form>
+        </div>
+  <button class="open-button" onclick="openForm2()"> 
+    <img src="https://www.evmwheels.com/assets/img/location_icon.png" alt="" class="img"><span id="drop">Select Drop off</span>
+    </button>
+
+      <div class="form-popup" id="myForm2">
+  <form action="/action_page.php" class="form-container">
+     <div>
+      <h1>Select Drop_Off City</h1>
+        <select name="dropoff" id="dropoff" oninput="dropcity()" class="dropdown">
+          <option value=""></option>
+     <option value="Cochin">Cochin</option>
+     
+                  <option value="Kottayam">Kottayam</option>
+                  <option value="Trivandrum">Trivandrum</option>
+                  <option value="Kozhikode">Kozhikode</option>
+                  <option value="Kollam">Kollam</option>
+  </select>
+   <br><br>
+  <input type="button" value="" onclick="dropcity()">
+      </div>
+    <button type="submit" class="btn">Back</button>
+    <button type="button" class="btn cancel" onclick="closeForm2()">Close</button>
+  </form>
+</div>
+ <button class="open-button" onclick="openForm3()"><img src="https://www.evmwheels.com/assets/img/date_icon.png" alt="" class="img"><span id="dropout">Select Drop-off Date & Time</span> </button>
+
+      <div class="form-popup" id="myForm3">
+  <form action="/action_page.php" class="form-container">
+    <h1>Select Your Drop Date</h1>
+     <input type="datetime-local" id="dropup" name="dropup" oninput="dropindate()">
+        <input type="button" value="" onclick="dropindate()">
+    <button type="submit" class="btn">Back</button>
+    <button type="button" class="btn cancel" onclick="closeForm3()">Close</button>
+  </form>
+</div>
+
+<div class="button5">
+  <a href="users/cars" class="open-button">Search</a>
+</div>
+
+<script>
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+function openForm1() {
+  document.getElementById("myForm1").style.display = "block";
+}
+
+function closeForm1() {
+  document.getElementById("myForm1").style.display = "none";
+}
+function openForm2() {
+  document.getElementById("myForm2").style.display = "block";
+}
+
+function closeForm2() {
+  document.getElementById("myForm2").style.display = "none";
+}
+function openForm3() {
+  document.getElementById("myForm3").style.display = "block";
+}
+
+function closeForm3() {
+  document.getElementById("myForm3").style.display = "none";
+}
+function selectcity() {
+  let city = document.getElementById("cars").value
+  document.getElementById("pick").innerHTML = city
+}
+function pickupdate() {
+  let pickup = document.getElementById("PickUP").value
+  document.getElementById("date").innerHTML = pickup
+}
+function dropcity() {
+  let dropin = document.getElementById("dropoff").value
+  document.getElementById("drop").innerHTML = dropin
+}
+function dropindate() {
+  let dropoffdate = document.getElementById("dropup").value
+  document.getElementById("dropout").innerHTML = dropoffdate
+}
+</script>
+
+    </div>
+  </div>
+</div>
+</body>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{{!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+</script> --}}
+    <title>RideOn</title>
+    <link rel="stylesheet" href="/stylesheets/sidebar.css">
+</head>
+<body>
+    
+
+<style>
+    .main
+    {
+        width: 60%;
+        height: 340px;
+        box-shadow: rgba(23, 30, 104, 0.35) 0px 5px 15px;
+        margin: auto;
+        padding: 30px;
+        margin-top: 40px;
+        border-radius: 5px;
+    }
+    h2{
+        text-align: center;
+        color:  #24047a;
+        font-weight: bolder;
+        text-shadow: 2px 2px 2px rgb(45, 45, 155);    
+        }
+    .rzp-button
+    {
+        padding: 10px;
+        margin: auto;
+        display: block;
+        border-radius: 5px;
+        background-color: #24047a;
+        color: white;
+    }
+    #amount{
+        display: none;
+    }
+    
+</style>
+<body>
+    <div class="nav">
+    <h4>SHOPIFY</h4>
+<a href="/" class="logout">Explore New</a>
+</div>
+<div class="main">
+    <h2>Check Out</h2><br>
+    <h5>Order Id : <span id="orderid">{{order.id}}</span></h5><br>
+    <h5>Amount : <span id="amount">{{order.amount}}</span>
+    <span id="amounts"></span></h5>
+    <button onclick="payNow()" class="rzp-button">Pay with Razorpay</button><br>
+    {{!-- <center><a href="/" class="btn btn-success" style="background-color:#24047a;">Explore New</a></center> --}}
+</div>
+
+<script>
+    let id = document.getElementById('orderid').innerHTML;
+    var  amount = document.getElementById('amount').innerHTML;
+    document.getElementById('amounts').innerHTML = amount/100;
+    var options = {
+    "key": "rzp_test_9lippGn0j5aik2", // Enter the Key ID generated from the Dashboard
+    "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Acme Corp",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        pay(response);
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+function payNow(){
+    console.log("clicked")
+    rzp1.open();
+    e.preventDefault();
+}
+    function pay(response) {
+        $.post('/verify',
+        data = {
+            response
+        },function(data,status){
+            console.log(data)
+            window.location.href="/"
+        }
+        )
+}
+</script>
+</body>
+
+</body>
+</html>
