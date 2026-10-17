@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RentACar | Fleet</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#152238;background:#f4f7fb}*{box-sizing:border-box}body{margin:0}header{background:#101c32;color:white;padding:22px max(20px,calc((100% - 1120px)/2));display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}header a{color:white;text-decoration:none;margin-left:16px}.hero{max-width:1120px;margin:36px auto 20px;padding:0 20px}.hero h1{font-size:clamp(30px,5vw,48px);margin:0 0 8px}.muted{color:#66758a}.grid{max-width:1120px;margin:0 auto;padding:0 20px 48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}.card{background:white;border:1px solid #e1e8f0;border-radius:18px;overflow:hidden;box-shadow:0 8px 26px #1327430c}.card img{width:100%;height:180px;object-fit:cover;background:#e7edf5}.content{padding:18px}.price{font-size:24px;font-weight:800;color:#0a7968}.pill{display:inline-block;background:#e6f7f3;color:#087665;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.empty{grid-column:1/-1;background:white;padding:28px;border-radius:16px}.btn{display:inline-block;background:#087f72;color:white;text-decoration:none;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}.notice{max-width:1120px;margin:0 auto 20px;padding:0 20px;color:#9a3412}footer{text-align:center;padding:25px;color:#68768b}@media(max-width:600px){header{align-items:flex-start}header nav a{margin:0 12px 0 0}}
+</style>
+</head>
+<body>
+<header><strong>RentACar</strong><nav><a href="/">Home</a><a href="/fleet">Browse cars</a><a href="/users/login">Sign in</a></nav></header>
+<section class="hero"><h1>Find your next ride.</h1><p class="muted">Explore available vehicles and submit a rental request. Rates are shown per day in AED unless specified.</p></section>
+<div id="notice" class="notice" role="status"></div><main id="cars" class="grid"><div class="empty">Loading available cars…</div></main>
+<footer>RentACar · Drive with confidence</footer>
+<script>
+(async function(){
+ const target=document.getElementById('cars'), notice=document.getElementById('notice');
+ try{
+  const response=await fetch('/api/cars'); const data=await response.json();
+  if(!response.ok) throw new Error(data.error||'Unable to load cars.');
+  if(!data.cars.length){target.innerHTML='<div class="empty"><h2>No cars listed yet</h2><p class="muted">Please check back soon.</p></div>';return;}
+  target.innerHTML=data.cars.map(car=>'<article class="card">'+(car.imageUrl?'<img loading="lazy" src="'+escapeHtml(car.imageUrl)+'" alt="'+escapeHtml(car.name)+'">':'<div style="height:180px;display:grid;place-items:center;background:#e7edf5;color:#75849a">Vehicle image not available</div>')+'<div class="content"><span class="pill">'+escapeHtml(car.category||'Standard')+'</span><h2>'+escapeHtml(car.name)+'</h2><p class="muted">'+escapeHtml(car.brand)+' '+escapeHtml(car.model)+' · '+car.seats+' seats · '+escapeHtml(car.transmission)+'</p><p>'+escapeHtml(car.description||'Comfortable, reliable rental vehicle.')+'</p><div class="price">'+Number(car.dailyRate).toLocaleString(undefined,{maximumFractionDigits:2})+' '+escapeHtml(car.currency||'AED')+' <small style="font-size:13px;font-weight:500">/ day</small></div><a class="btn" style="margin-top:14px" href="/users/login">Sign in to request booking</a></div></article>').join('');
+ }catch(e){target.innerHTML='<div class="empty"><h2>Cars are temporarily unavailable</h2><p class="muted">Please try again shortly.</p></div>';notice.textContent=e.message;}
+ function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+})();
+</script>
+</body></html>
