@@ -40,6 +40,7 @@ router.post('/register', async (req, res, next) => {
     const user = await User.create({ fullname, email, password });
     req.session.userId = user._id.toString();
     req.session.userName = user.fullname;
+    req.session.userEmail = email;
     await recordActivity(req, 'register_success', email, user._id);
     return res.redirect('/fleet');
   } catch (error) {
@@ -63,12 +64,14 @@ router.post('/loginin', async (req, res, next) => {
       valid = password === user.password;
       if (valid) {
         user.password = password;
+        user.markModified('password');
         await user.save();
       }
     }
     if (!valid) { await recordActivity(req, 'login_failed', email, user._id); return res.status(401).send('Email or password is incorrect.'); }
     req.session.userId = user._id.toString();
     req.session.userName = user.fullname;
+    req.session.userEmail = email;
     await recordActivity(req, 'login_success', email, user._id);
     return res.redirect('/fleet');
   } catch (error) {
