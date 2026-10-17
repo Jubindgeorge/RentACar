@@ -97,6 +97,17 @@ router.post('/bookings', asyncRoute(async (req, res) => {
   res.status(201).json({ message: 'Booking request received. Save the location access token securely; it is shown only once.', booking, locationAccessToken });
 }));
 
+router.get('/admin/users', requireAdmin, asyncRoute(async (req, res) => {
+  const users = await require('../Models/userModel').find().select('fullname email createdAt').sort({ createdAt: -1 }).limit(500).lean();
+  res.json({ users });
+}));
+
+router.get('/admin/login-activity', requireAdmin, asyncRoute(async (req, res) => {
+  const LoginActivity = require('../Models/loginActivityModel');
+  const activity = await LoginActivity.find().select('email event ipAddress userAgent createdAt').sort({ createdAt: -1 }).limit(200).lean();
+  res.json({ activity });
+}));
+
 router.get('/admin/bookings', requireAdmin, asyncRoute(async (req, res) => {
   const bookings = await Booking.find().populate('car').sort({ createdAt: -1 }).lean();
   res.json({ bookings });
