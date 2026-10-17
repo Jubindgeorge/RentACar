@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var crypto = require('crypto');
@@ -14,7 +15,10 @@ var app = express();
 app.disable('x-powered-by');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-hbs.registerPartials(path.join(__dirname, 'views/partials'));
+var partialsDir = path.join(__dirname, 'views/partials');
+// Older repository versions may not contain a partials directory.
+// Register it only when it exists so the app can still boot cleanly.
+if (fs.existsSync(partialsDir)) hbs.registerPartials(partialsDir);
 app.use(logger('dev'));
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: false, limit: '100kb' }));
