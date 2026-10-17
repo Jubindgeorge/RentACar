@@ -12,6 +12,7 @@ const bookingSchema = new mongoose.Schema({
   totalPrice: { type: Number, required: true, min: 0 },
   currency: { type: String, default: 'AED', uppercase: true },
   status: { type: String, enum: ['pending', 'confirmed', 'active', 'completed', 'cancelled'], default: 'pending' },
+  locationAccessTokenHash: { type: String, select: false },
   locationSharingConsent: { type: Boolean, default: false },
   locationSharingEnabled: { type: Boolean, default: false },
   lastSharedLocation: {
