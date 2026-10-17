@@ -22,11 +22,11 @@ router.get('/', function(req, res) {
 
 router.get('/login', (req, res) => res.render('user/login'));
 
-router.get('/cars', (req, res) => res.render('user/cars'));
+router.get('/cars', (req, res) => res.redirect('/fleet'));
 router.get('/cart', (req, res) => res.render('user/cart'));
-router.get('/brand', (req, res) => res.render('user/brand'));
-router.get('/carslist', (req, res) => res.render('user/carslist'));
-router.get('/list', (req, res) => res.render('user/list'));
+router.get('/brand', (req, res) => res.redirect('/fleet'));
+router.get('/carslist', (req, res) => res.redirect('/fleet'));
+router.get('/list', (req, res) => res.redirect('/fleet'));
 router.get('/About', (req, res) => res.render('user/About'));
 
 router.post('/register', async (req, res, next) => {
