@@ -1,0 +1,30 @@
+name: RentACar checks
+
+on:
+  push:
+    branches: [sub]
+  pull_request:
+    branches: [sub]
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install --ignore-scripts
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check bin/www
+          node --check config/config.js
+          node --check routes/index.js
+          node --check routes/users.js
+          node --check routes/api.js
+          node --check middleware/requireAdmin.js
+          node --check Models/userModel.js
+          node --check Models/carModel.js
+          node --check Models/bookingModel.js
