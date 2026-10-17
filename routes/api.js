@@ -68,6 +68,7 @@ router.delete('/admin/cars/:id', requireAdmin, asyncRoute(async (req, res) => {
 }));
 
 router.post('/bookings', asyncRoute(async (req, res) => {
+  if (!req.session || !req.session.userId) return res.status(401).json({ error: 'Please sign in or register before requesting a booking.' });
   const { carId, customerName, customerEmail, customerPhone, pickupLocation, dropoffLocation, pickupAt, dropoffAt } = req.body;
   if (![carId, customerName, customerEmail, customerPhone, pickupLocation, dropoffLocation, pickupAt, dropoffAt].every(v => typeof v === 'string' && v.trim())) {
     return res.status(400).json({ error: 'Please provide all required booking details.' });
