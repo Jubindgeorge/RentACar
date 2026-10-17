@@ -16,7 +16,9 @@
     "mongoose": "^7.5.0",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.22",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "bcryptjs": "^2.4.3",
+    "express-session": "^1.18.1"
   },
   "main": "app.js",
   "author": "",
