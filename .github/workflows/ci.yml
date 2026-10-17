@@ -16,6 +16,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm install --ignore-scripts
+      - name: Run tests
+        run: npm test
       - name: Check JavaScript syntax
         run: |
           node --check app.js
