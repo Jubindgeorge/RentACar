@@ -28,3 +28,16 @@ jobs:
           node --check Models/userModel.js
           node --check Models/carModel.js
           node --check Models/bookingModel.js
+          node --check Models/loginActivityModel.js
+      - name: Check inline page JavaScript
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          for source, target in [('views/user/fleet.hbs', '/tmp/fleet-inline.js'), ('views/admin/dashboard.hbs', '/tmp/admin-inline.js')]:
+              html = Path(source).read_text()
+              scripts = re.findall(r'<script>(.*?)</script>', html, re.S)
+              Path(target).write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/fleet-inline.js
+          node --check /tmp/admin-inline.js
