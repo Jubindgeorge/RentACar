@@ -17,4 +17,7 @@ router.get('/', function(req, res, next) {
           res.render('admin/addproducts');
           });
           
+router.get('/fleet', (req, res) => res.render('user/fleet'));
+router.get('/admin/dashboard', (req, res) => res.render('admin/dashboard'));
+
 module.exports = router;
