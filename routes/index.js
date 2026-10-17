@@ -6,16 +6,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'RideOn' });
 });
 
-  router.get('/adminlogin',(req,res)=>{
-    res.render('admin/adminlogin');
-    });
+  router.get('/adminlogin', (req, res) => res.redirect('/admin/dashboard'));
    
-        router.get('/adminhome',(req,res)=>{
-          res.render('admin/adminhome');
-          });
-        router.get('/addproducts',(req,res)=>{
-          res.render('admin/addproducts');
-          });
+        router.get('/adminhome', (req, res) => res.redirect('/admin/dashboard'));
+        router.get('/addproducts', (req, res) => res.redirect('/admin/dashboard'));
           
 router.get('/fleet', (req, res) => res.render('user/fleet'));
 
