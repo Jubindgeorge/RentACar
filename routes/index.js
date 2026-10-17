@@ -18,6 +18,13 @@ router.get('/', function(req, res, next) {
           });
           
 router.get('/fleet', (req, res) => res.render('user/fleet'));
+
+// Friendly public aliases for the customer pages.
+router.get('/login', (req, res) => res.redirect('/users/login'));
+router.get('/cart', (req, res) => res.redirect('/users/cart'));
+router.get('/cars', (req, res) => res.redirect('/fleet'));
+router.get('/carslist', (req, res) => res.redirect('/fleet'));
+router.get('/About', (req, res) => res.redirect('/users/About'));
 router.get('/admin/dashboard', (req, res) => res.render('admin/dashboard'));
 
 module.exports = router;
