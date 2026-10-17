@@ -2,9 +2,9 @@ name: RentACar checks
 
 on:
   push:
-    branches: [sub]
+    branches: [main, sub]
   pull_request:
-    branches: [sub]
+    branches: [main, sub]
 
 jobs:
   syntax:

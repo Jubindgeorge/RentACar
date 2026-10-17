@@ -16,6 +16,19 @@ async function recordActivity(req, event, email, userId) {
   }
 }
 
+// Prevent session fixation by issuing a fresh session ID after authentication.
+function establishUserSession(req, user, email) {
+  return new Promise((resolve, reject) => {
+    req.session.regenerate(error => {
+      if (error) return reject(error);
+      req.session.userId = user._id.toString();
+      req.session.userName = user.fullname;
+      req.session.userEmail = email;
+      req.session.save(saveError => saveError ? reject(saveError) : resolve());
+    });
+  });
+}
+
 router.get('/', function(req, res) {
   res.send('RentACar customer routes are available.');
 });
@@ -38,9 +51,7 @@ router.post('/register', async (req, res, next) => {
       return res.status(400).send('Enter a valid name and email, and a password with at least 8 characters.');
     }
     const user = await User.create({ fullname, email, password });
-    req.session.userId = user._id.toString();
-    req.session.userName = user.fullname;
-    req.session.userEmail = email;
+    await establishUserSession(req, user, email);
     await recordActivity(req, 'register_success', email, user._id);
     return res.redirect('/fleet');
   } catch (error) {
@@ -69,9 +80,7 @@ router.post('/loginin', async (req, res, next) => {
       }
     }
     if (!valid) { await recordActivity(req, 'login_failed', email, user._id); return res.status(401).send('Email or password is incorrect.'); }
-    req.session.userId = user._id.toString();
-    req.session.userName = user.fullname;
-    req.session.userEmail = email;
+    await establishUserSession(req, user, email);
     await recordActivity(req, 'login_success', email, user._id);
     return res.redirect('/fleet');
   } catch (error) {
