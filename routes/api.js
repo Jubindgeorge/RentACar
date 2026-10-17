@@ -1,10 +1,18 @@
 const express = require('express');
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Car = require('../Models/carModel');
 const Booking = require('../Models/bookingModel');
 const requireAdmin = require('../middleware/requireAdmin');
 
 const router = express.Router();
+function hasBookingAccess(booking, req) {
+  const supplied = req.get('x-booking-token') || '';
+  if (!booking.locationAccessTokenHash || !supplied) return false;
+  const actual = crypto.createHash('sha256').update(supplied).digest();
+  const expected = Buffer.from(booking.locationAccessTokenHash, 'hex');
+  return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+}
 const asyncRoute = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 router.get('/health', (req, res) => {
@@ -72,12 +80,15 @@ router.post('/bookings', asyncRoute(async (req, res) => {
   });
   if (conflict) return res.status(409).json({ error: 'This car is already booked for part of that time.' });
   const days = Math.max(1, Math.ceil((end - start) / 86400000));
+  const locationAccessToken = crypto.randomBytes(32).toString('hex');
+  const locationAccessTokenHash = crypto.createHash('sha256').update(locationAccessToken).digest('hex');
   const booking = await Booking.create({
+    locationAccessTokenHash,
     car: car._id, customerName: customerName.trim(), customerEmail: customerEmail.trim().toLowerCase(),
     customerPhone: customerPhone.trim(), pickupLocation: pickupLocation.trim(), dropoffLocation: dropoffLocation.trim(),
     pickupAt: start, dropoffAt: end, totalPrice: days * car.dailyRate, currency: car.currency
   });
-  res.status(201).json({ message: 'Booking request received.', booking });
+  res.status(201).json({ message: 'Booking request received. Save the location access token securely; it is shown only once.', booking, locationAccessToken });
 }));
 
 router.get('/admin/bookings', requireAdmin, asyncRoute(async (req, res) => {
@@ -98,12 +109,13 @@ router.patch('/admin/bookings/:id/status', requireAdmin, asyncRoute(async (req, 
 router.post('/bookings/:id/location-consent', asyncRoute(async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ error: 'Invalid booking ID.' });
   if (req.body.consent !== true && req.body.consent !== false) return res.status(400).json({ error: 'Explicit consent value is required.' });
-  const booking = await Booking.findByIdAndUpdate(req.params.id, {
-    locationSharingConsent: req.body.consent,
-    locationSharingEnabled: req.body.consent,
-    ...(req.body.consent ? {} : { lastSharedLocation: { latitude: undefined, longitude: undefined, updatedAt: undefined } })
-  }, { new: true });
+  const booking = await Booking.findById(req.params.id).select('+locationAccessTokenHash');
   if (!booking) return res.status(404).json({ error: 'Booking not found.' });
+  if (!hasBookingAccess(booking, req)) return res.status(403).json({ error: 'Valid booking access token required.' });
+  booking.locationSharingConsent = req.body.consent;
+  booking.locationSharingEnabled = req.body.consent;
+  if (!req.body.consent) booking.lastSharedLocation = {};
+  await booking.save();
   res.json({ message: req.body.consent ? 'Location sharing enabled by explicit consent.' : 'Location sharing stopped.', locationSharingEnabled: booking.locationSharingEnabled });
 }));
 
@@ -113,12 +125,12 @@ router.post('/bookings/:id/location', asyncRoute(async (req, res) => {
   if (typeof latitude !== 'number' || typeof longitude !== 'number' || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
     return res.status(400).json({ error: 'Valid numeric latitude and longitude are required.' });
   }
-  const booking = await Booking.findOneAndUpdate(
-    { _id: req.params.id, locationSharingConsent: true, locationSharingEnabled: true },
-    { lastSharedLocation: { latitude, longitude, updatedAt: new Date() } },
-    { new: true }
-  );
-  if (!booking) return res.status(403).json({ error: 'Location sharing is not enabled for this booking.' });
+  const booking = await Booking.findById(req.params.id).select('+locationAccessTokenHash');
+  if (!booking) return res.status(404).json({ error: 'Booking not found.' });
+  if (!hasBookingAccess(booking, req)) return res.status(403).json({ error: 'Valid booking access token required.' });
+  if (!booking.locationSharingConsent || !booking.locationSharingEnabled) return res.status(403).json({ error: 'Location sharing is not enabled for this booking.' });
+  booking.lastSharedLocation = { latitude, longitude, updatedAt: new Date() };
+  await booking.save();
   res.json({ message: 'Location updated while sharing is enabled.' });
 }));
 
