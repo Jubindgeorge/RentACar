@@ -1,55 +1,8 @@
-<!DOCTYPE html>
-<!-- Coding By CodingNepal - codingnepalweb.com -->
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>RideOn Login & Signup Form</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="body1">
-    <section class="wrapper">
-      <div class="form signup">
-        <header>Signup</header>
-        <form action="/users/register" method="post">
-          <input type="text" name="fullname" placeholder="Full name" required />
-          <input type="text" name="email" placeholder="Email address" required />
-          <input type="password" name="password" placeholder="Password" required />
-          <div class="checkbox">
-            <input type="checkbox" id="signupCheck" />
-            <label for="signupCheck">I accept all terms & conditions</label>
-          </div>
-          <input type="submit" value="Signup" style="background-color: red;color:white"/>
-        </form>
-      </div>
-
-      <div class="form login">
-        <header>Login</header>
-        <form action="/users/loginin" method="post">
-          <input type="text" name="Email" placeholder="Email address" required />
-          <input type="password" name="Password" placeholder="Password" required />
-          <a href="#" style="font-size: 20px;">Forgot password?</a>
-          <input type="submit" value="Login" />
-        </form>
-      </div>
-<!-- Hero section -->
-    <section class="hero1">
-    </section>
-      <script>
-        const wrapper = document.querySelector(".wrapper"),
-          signupHeader = document.querySelector(".signup header"),
-          loginHeader = document.querySelector(".login header");
-
-        loginHeader.addEventListener("click", () => {
-          wrapper.classList.add("active");
-        });
-        signupHeader.addEventListener("click", () => {
-          wrapper.classList.remove("active");
-        });
-      </script>
-    </section>
-    </div>
-  </body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in | RentACar</title><link rel="stylesheet" href="/stylesheets/modern.css"></head><body>
+<header class="rc-wrap rc-nav"><a class="rc-brand" href="/">RentACar<span>+</span></a><nav class="rc-links"><a href="/fleet">Explore cars</a><a href="/">Home</a></nav></header>
+<main class="rc-wrap rc-login-layout"><section class="rc-login-copy"><span class="rc-kicker">Welcome to a smoother drive</span><h1>Your next journey starts with a sign in.</h1><p>Access your RentACar account to continue. New here? Create an account in just a moment.</p><div class="rc-feature" style="margin-top:28px;max-width:430px"><span class="num">YOUR ACCOUNT, YOUR CONTROL</span><h3 style="margin-top:14px">Private by default.</h3><p>Location sharing stays off unless you choose to turn it on for a booking.</p></div></section>
+<section class="rc-panel"><div class="rc-tabs" role="tablist"><button type="button" id="loginTab" class="active" role="tab" aria-selected="true">Sign in</button><button type="button" id="signupTab" role="tab" aria-selected="false">Create account</button></div>
+<form class="rc-auth-form active" id="loginForm" action="/users/loginin" method="post"><div class="rc-field"><label for="loginEmail">EMAIL ADDRESS</label><input id="loginEmail" type="email" name="Email" placeholder="you@example.com" autocomplete="email" required></div><div class="rc-field"><label for="loginPassword">PASSWORD</label><input id="loginPassword" type="password" name="Password" placeholder="Enter your password" autocomplete="current-password" required></div><p class="rc-small">Use the email and password associated with your account.</p><button class="rc-btn rc-btn-lime" type="submit">Sign in ↗</button></form>
+<form class="rc-auth-form" id="signupForm" action="/users/register" method="post"><div class="rc-field"><label for="fullName">FULL NAME</label><input id="fullName" type="text" name="fullname" placeholder="Your full name" autocomplete="name" maxlength="120" required></div><div class="rc-field"><label for="signupEmail">EMAIL ADDRESS</label><input id="signupEmail" type="email" name="email" placeholder="you@example.com" autocomplete="email" maxlength="254" required></div><div class="rc-field"><label for="signupPassword">PASSWORD</label><input id="signupPassword" type="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required></div><p class="rc-small">By creating an account, you agree to use the service responsibly. Do not share your password.</p><button class="rc-btn rc-btn-lime" type="submit">Create account ↗</button></form><p class="rc-small" style="margin-top:18px">Need help? Return to <a href="/">RentACar home</a>.</p></section></main>
+<footer class="rc-footer"><div class="rc-wrap rc-footer-inner"><div><a class="rc-brand" href="/" style="color:white">RentACar<span>+</span></a><p>Drive with confidence.</p></div><p>Secure sign in · Privacy-first rentals</p></div></footer>
+<script>const lt=document.getElementById('loginTab'),st=document.getElementById('signupTab'),lf=document.getElementById('loginForm'),sf=document.getElementById('signupForm');function showAuth(signup){lt.classList.toggle('active',!signup);st.classList.toggle('active',signup);lt.setAttribute('aria-selected',String(!signup));st.setAttribute('aria-selected',String(signup));lf.classList.toggle('active',!signup);sf.classList.toggle('active',signup)}lt.addEventListener('click',()=>showAuth(false));st.addEventListener('click',()=>showAuth(true));if(location.hash==='#signup')showAuth(true);</script></body></html>
