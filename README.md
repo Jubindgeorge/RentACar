@@ -11,6 +11,7 @@ Express + Handlebars car-rental application using MongoDB Atlas / Mongoose.
 5. Set:
    - `MONGODB_URI`: the Atlas SRV URI for the app database, including the real username/password.
    - `ADMIN_API_KEY`: a long random secret (32+ characters).
+   - `SESSION_SECRET`: a separate long random secret used to sign customer session cookies.
    - `PORT=3000`
 6. Run `npm start`.
 7. Visit `/health`? The API health endpoint is `/api/health`; browse the app at `/`, fleet at `/fleet`, admin UI at `/admin/dashboard`.
@@ -23,7 +24,7 @@ Public:
 - `GET /api/health`
 - `GET /api/cars`
 - `GET /api/cars/:id`
-- `POST /api/bookings`
+- `POST /api/bookings` (requires a signed-in customer session)
 
 Admin routes require `x-admin-key: <ADMIN_API_KEY>`:
 - `GET /api/admin/cars`
@@ -41,4 +42,7 @@ Booking response returns a one-time `locationAccessToken`. The customer must sen
 - Keep the admin key only in server environment variables and the trusted admin browser tab. Rotate it immediately if exposed.
 - Do not use a broad Atlas network rule permanently. If Codespaces outbound IP changes, update Atlas Network Access deliberately.
 - This repository's older login/register UI still needs a complete secure account/session implementation before it should be used for real customer authentication. The booking API currently accepts customer details directly and does not prove account ownership.
+- Customer registration and login hash passwords with bcrypt; legacy plaintext passwords are upgraded only after successful login. Rotate any credentials previously committed or exposed.
+- The current session store is Express's in-memory development store. Configure a durable production session store before deploying to multiple instances or relying on sessions across restarts.
+- Booking forms require a signed-in session. The booking API still needs production-grade rate limiting, email verification, and further abuse protection.
 - Run the GitHub Actions syntax check and test health, booking conflicts, admin authorization, and consent revocation in a configured environment before production use.
