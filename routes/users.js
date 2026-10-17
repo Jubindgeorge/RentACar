@@ -1,7 +1,20 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../Models/userModel');
+const LoginActivity = require('../Models/loginActivityModel');
 const router = express.Router();
+
+async function recordActivity(req, event, email, userId) {
+  try {
+    await LoginActivity.create({
+      event, email: String(email || '').slice(0, 254), user: userId || null,
+      ipAddress: String(req.ip || '').slice(0, 80),
+      userAgent: String(req.get('user-agent') || '').slice(0, 400)
+    });
+  } catch (error) {
+    console.error('Could not record login activity:', error.message);
+  }
+}
 
 router.get('/', function(req, res) {
   res.send('RentACar customer routes are available.');
@@ -27,6 +40,7 @@ router.post('/register', async (req, res, next) => {
     const user = await User.create({ fullname, email, password });
     req.session.userId = user._id.toString();
     req.session.userName = user.fullname;
+    await recordActivity(req, 'register_success', email, user._id);
     return res.redirect('/fleet');
   } catch (error) {
     if (error.code === 11000) return res.status(409).send('An account with this email already exists. Please sign in.');
@@ -40,7 +54,7 @@ router.post('/loginin', async (req, res, next) => {
     const password = String(req.body.Password || req.body.password || '');
     if (!email || !password) return res.status(400).send('Enter your email and password.');
     const user = await User.findOne({ email }).select('+password');
-    if (!user) return res.status(401).send('Email or password is incorrect.');
+    if (!user) { await recordActivity(req, 'login_failed', email, null); return res.status(401).send('Email or password is incorrect.'); }
     let valid = false;
     if (user.password.startsWith('$2')) {
       valid = await bcrypt.compare(password, user.password);
@@ -52,9 +66,10 @@ router.post('/loginin', async (req, res, next) => {
         await user.save();
       }
     }
-    if (!valid) return res.status(401).send('Email or password is incorrect.');
+    if (!valid) { await recordActivity(req, 'login_failed', email, user._id); return res.status(401).send('Email or password is incorrect.'); }
     req.session.userId = user._id.toString();
     req.session.userName = user.fullname;
+    await recordActivity(req, 'login_success', email, user._id);
     return res.redirect('/fleet');
   } catch (error) {
     next(error);
@@ -62,8 +77,11 @@ router.post('/loginin', async (req, res, next) => {
 });
 
 router.post('/logout', (req, res, next) => {
-  req.session.destroy(error => {
+  const userId = req.session.userId;
+  const email = req.session.userEmail || '';
+  req.session.destroy(async error => {
     if (error) return next(error);
+    try { await LoginActivity.create({ event: 'logout', email, user: userId || null, ipAddress: String(req.ip || '').slice(0, 80), userAgent: String(req.get('user-agent') || '').slice(0, 400) }); } catch (logError) { console.error('Could not record logout:', logError.message); }
     res.clearCookie('rentacar.sid');
     res.redirect('/');
   });
