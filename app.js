@@ -19,6 +19,11 @@ app.use(express.urlencoded({ extended: false, limit: '100kb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Start the database connection; the health endpoint reports readiness accurately.
+con().catch(error => {
+  console.error('MongoDB startup failed:', error.message);
+});
+
 app.use('/api', apiRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
