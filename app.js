@@ -12,6 +12,12 @@ var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 
 var app = express();
+
+// A random fallback is convenient locally, but it invalidates sessions on restart.
+// Production must provide a stable secret through the hosting environment.
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET must be configured in production.');
+}
 app.disable('x-powered-by');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

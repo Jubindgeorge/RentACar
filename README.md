@@ -37,6 +37,19 @@ Admin routes require `x-admin-key: <ADMIN_API_KEY>`:
 
 Booking response returns a one-time `locationAccessToken`. The customer must send it in `x-booking-token` to enable/disable sharing or post coordinates. Location is off by default. The current API token is a booking-specific bearer credential; it is not a substitute for a full customer account/session system.
 
+## Deploy to Render
+
+This repository includes a Render Blueprint at `render.yaml`. To deploy:
+
+1. Sign in to Render and choose **New → Blueprint**.
+2. Connect the `Jubindgeorge/RentACar` GitHub repository and select this repository's branch after the deployment PR is merged to `main`.
+3. Review the service created from `render.yaml`. Render will generate `ADMIN_API_KEY` and `SESSION_SECRET`; keep both private.
+4. Add `MONGODB_URI` in the Render service environment. Use the Atlas connection string for the intended database, and verify the database user has only the required database permissions.
+5. In MongoDB Atlas Network Access, allow Render's outbound traffic using the method supported by your Atlas/Render plans. Avoid leaving `0.0.0.0/0` open as a permanent shortcut.
+6. Deploy and wait for Render's health check at `/api/health` to pass. If it fails, inspect Render logs for the sanitized connection guidance; never paste secrets into issue comments or chat.
+
+The free Render service may sleep when idle and is not a suitable guarantee for production uptime. Confirm the current plan's filesystem, outbound networking, and service limits before relying on it.
+
 ## Important deployment notes
 
 - Keep the admin key only in server environment variables and the trusted admin browser tab. Rotate it immediately if exposed.
