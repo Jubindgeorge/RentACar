@@ -37,6 +37,11 @@ router.get('/cars/:id', asyncRoute(async (req, res) => {
   res.json({ car });
 }));
 
+router.get('/admin/cars', requireAdmin, asyncRoute(async (req, res) => {
+  const cars = await Car.find().sort({ createdAt: -1 }).lean();
+  res.json({ cars });
+}));
+
 router.post('/admin/cars', requireAdmin, asyncRoute(async (req, res) => {
   const allowed = ['name','brand','model','year','category','transmission','fuel','seats','dailyRate','currency','imageUrl','description','pickupLocation','available'];
   const data = {};
